@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'package:zo/wigdet/products/title_text.dart';
+
 class ProductPage extends StatelessWidget {
   final String title;
   final String imageUrl;
@@ -52,7 +54,7 @@ class ProductPage extends StatelessWidget {
             Image.asset(imageUrl),
             Container(
               padding: EdgeInsets.all(10.0),
-              child: Text(title,style: TextStyle(fontFamily: 'runner',fontSize: 26.0,fontWeight: FontWeight.bold),),
+              child: TitleText(title),
             ),
             Container(
               padding: EdgeInsets.all(10.0),

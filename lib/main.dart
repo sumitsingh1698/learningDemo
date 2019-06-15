@@ -41,12 +41,18 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       // debugShowMaterialGrid: true,
       theme: ThemeData(
-          brightness: Brightness.light,
+          brightness: Brightness.dark,
           primarySwatch: Colors.deepOrange,
-          accentColor: Colors.deepPurple),
-      // home: AuthPage(),
+          accentColor: Colors.orange,
+          buttonColor: Colors.deepPurple,
+          backgroundColor: Colors.deepPurple,
+          primaryColorDark: Colors.orange,
+          iconTheme: IconThemeData(color: Colors.deepPurple),
+          ),
+       home: AuthPage(),
       routes: {
-        '/': (BuildContext context) => ProductsPage(_products),
+//        '/': (BuildContext context) => ProductsPage(_products),
+        '/productspage': (BuildContext context) => ProductsPage(_products),
         '/admin': (BuildContext context) =>
             ProductsAdminPage(_addProduct, _deleteProduct),
       },
