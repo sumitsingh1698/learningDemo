@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import 'package:zo/wigdet/products/title_text.dart';
-import '../scoped_model/products.dart';
+import '../scoped_model/main.dart';
 import '../models/product.dart';
 
 class ProductPage extends StatelessWidget {
@@ -42,7 +42,7 @@ class ProductPage extends StatelessWidget {
         Navigator.pop(context, false);
         return Future.value(false);
       },
-      child: ScopedModelDescendant<ProductsModel>(builder: (BuildContext context,Widget child,ProductsModel model){
+      child: ScopedModelDescendant<MainModel>(builder: (BuildContext context,Widget child,MainModel model){
         List<Product> products = model.products;
         int index = model.getSelectedIndex;
         return Scaffold(

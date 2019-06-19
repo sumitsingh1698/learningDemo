@@ -3,11 +3,11 @@ import 'package:scoped_model/scoped_model.dart';
 
 import './product_card.dart';
 import '../../models/product.dart';
-import '../../scoped_model/products.dart';
+import '../../scoped_model/main.dart';
 
 class Products extends StatelessWidget {
 
-  Widget _buildProductList(List<Product> products,ProductsModel model) {
+  Widget _buildProductList(List<Product> products,MainModel model) {
     Widget productCards;
     if (products.length > 0) {
       print('sdafja');
@@ -27,9 +27,9 @@ class Products extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('[Products Widget] build()');
-    return ScopedModelDescendant<ProductsModel>(builder: (BuildContext context,Widget child,ProductsModel model){
+    return ScopedModelDescendant<MainModel>(builder: (BuildContext context,Widget child,MainModel model){
       print('the game');
-      return _buildProductList(model.products,model);
+      return _buildProductList(model.displayProducts,model);
     },);
   }
 }

@@ -2,16 +2,24 @@ import 'package:scoped_model/scoped_model.dart';
 
 import '../models/product.dart';
 
-class ProductsModel extends Model{
+abstract class ProductsModel extends Model{
   List<Product> _products = [];
   int selectedProductIndex;
-
+  bool _showFavorite = false;
 
   List<Product> get products {
     return List.from(_products);
   }
+  List<Product> get displayProducts {
+    if(_showFavorite)
+      return List.from(_products.where((Product product)=>product.isFavorite));
+    return List.from(_products);
+  }
   int get getSelectedIndex{
     return selectedProductIndex;
+  }
+  bool get getShowFavorite {
+    return _showFavorite;
   }
   Product get getSelectedProduct {
     if(selectedProductIndex == null)
@@ -46,6 +54,12 @@ class ProductsModel extends Model{
       isFavorite: newStatus,
     );
     _products[selectedProductIndex] = product;
+    notifyListeners();
+  }
+  void toggleShowFavorite(){
+    print('before$_showFavorite');
+    _showFavorite = !_showFavorite;
+    print('before$_showFavorite');
     notifyListeners();
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import '../models/product.dart';
-import '../scoped_model/products.dart';
+import '../scoped_model/main.dart';
 
 class ProductEditPage extends StatefulWidget {
   final int index;
@@ -70,7 +70,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
     );
   }
 
-  void _buttonPressed(Function addProduct,Function updateProduct) {
+  void _buttonPressed(MainModel model) {
     if (!formKey.currentState.validate()) {
       return;
     }
@@ -83,12 +83,11 @@ class _ProductEditPageState extends State<ProductEditPage> {
 
     if (widget.index != null) {
       print('update');
-      updateProduct(
-          product,
-          widget.index);
+      model.selectProduct(widget.index);
+      model.updateProduct(product);
     }
     else
-     addProduct(product);
+     model.addProduct(product);
     Navigator.pushReplacementNamed(context, '/productspage');
   }
 
@@ -102,7 +101,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
       },
-      child: ScopedModelDescendant(builder: (BuildContext context,Widget child,ProductsModel model){
+      child: ScopedModelDescendant<MainModel>(builder: (BuildContext context,Widget child,MainModel model){
         List<Product> products = model.products;
         String title = '';
         String descip = '';
@@ -127,7 +126,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
                 RaisedButton(
                   child: Text('Save'),
                   textColor: Colors.white,
-                  onPressed: () =>_buttonPressed(model.addProduct,model.updateProduct),
+                  onPressed: () =>_buttonPressed(model),
                 )
               ],
             ),

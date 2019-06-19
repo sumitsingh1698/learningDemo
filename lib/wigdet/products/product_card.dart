@@ -4,7 +4,7 @@ import 'package:scoped_model/scoped_model.dart';
 import 'price_tag.dart';
 import 'title_text.dart';
 import 'address_view.dart';
-import '../../scoped_model/products.dart';
+import '../../scoped_model/main.dart';
 import '../../models/product.dart';
 
 class ProductCard extends StatelessWidget{
@@ -12,7 +12,7 @@ class ProductCard extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-      return ScopedModelDescendant<ProductsModel>(builder: (BuildContext context,Widget child,ProductsModel model){
+      return ScopedModelDescendant<MainModel>(builder: (BuildContext context,Widget child,MainModel model){
         Product product = model.getSelectedProduct;
         int productIndex = model.getSelectedIndex;
         print(productIndex.toString()+'index  ');

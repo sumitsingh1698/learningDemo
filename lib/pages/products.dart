@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import '../wigdet/products/products.dart';
-import '../models/product.dart';
-import '../scoped_model/products.dart';
+import '../scoped_model/main.dart';
 
 class ProductsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant<ProductsModel>(builder: (BuildContext context,Widget child,ProductsModel model){
+    return ScopedModelDescendant<MainModel>(builder: (BuildContext context,Widget child,MainModel model){
       return Scaffold(
         drawer: Drawer(
           child: Column(
@@ -31,9 +30,9 @@ class ProductsPage extends StatelessWidget {
           title: Text('EasyList'),
           actions: <Widget>[
             IconButton(
-              icon: Icon(Icons.favorite,color: Colors.white,),
+              icon: Icon(model.getShowFavorite == true? Icons.favorite:Icons.favorite_border,color: Colors.white,),
               onPressed: (){
-
+                      model.toggleShowFavorite();
               },
             )
           ],

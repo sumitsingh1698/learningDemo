@@ -4,7 +4,7 @@ import './products.dart';
 
 class AuthPage extends StatelessWidget {
   final bool _arrangedTerm = false;
-
+  final GlobalKey<FormState> formkey = GlobalKey<FormState>();
   BoxDecoration _buildBackgroundImage() {
     return BoxDecoration(
         image: DecorationImage(
@@ -15,8 +15,12 @@ class AuthPage extends StatelessWidget {
   }
 
   Widget _buildLoginTextField() {
-    return TextField(
-      onSubmitted: (String value) {},
+    return TextFormField(
+      onSaved: (String value) {},
+      validator: (String value){
+        if(value.isEmpty || !RegExp(r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$').hasMatch(value))
+             return 'email is required or enter a valid email';
+      },
       decoration: InputDecoration(
           labelText: 'Login id',
           filled: true,
@@ -25,8 +29,16 @@ class AuthPage extends StatelessWidget {
   }
 
   Widget _buildPasswordTextField() {
-    return TextField(
-      onSubmitted: (String value) {},
+    return TextFormField(
+      onSaved: (String value) {},
+
+      validator: (String value){
+        print('repo email');
+        if(value.isEmpty || !RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$').hasMatch(value) ) {
+          print('repo email 2');
+          return 'Password must be at least 4 characters, no more than 8 characters, and must include at least one upper case letter, one lower case letter, and one numeric digit.';
+        }
+          },
       decoration: InputDecoration(
           labelText: 'Password',
           filled: true,
@@ -42,6 +54,9 @@ class AuthPage extends StatelessWidget {
         style: TextStyle(color: Colors.white),
       ),
       onPressed: () {
+        if(!formkey.currentState.validate())
+          return;
+        else
         Navigator.pushReplacementNamed(context, '/productspage');
       },
     );
@@ -61,20 +76,22 @@ class AuthPage extends StatelessWidget {
         child: Center(
           child: SingleChildScrollView(
               child: Container(
-            alignment: Alignment.center,
-            width: size,
-            child: Column(children: [
-              _buildLoginTextField(),
-              SizedBox(
-                height: 15,
-              ),
-              _buildPasswordTextField(),
-              SizedBox(
-                height: 20,
-              ),
-              _buildSubmitRaisedButton(context),
-            ]),
-          )),
+                  alignment: Alignment.center,
+                  width: size,
+                  child: Form(
+                    key: formkey,
+                    child: Column(children: [
+                      _buildLoginTextField(),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      _buildPasswordTextField(),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      _buildSubmitRaisedButton(context),
+                    ]),
+                  ))),
         ),
       ),
     );
