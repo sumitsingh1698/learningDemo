@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 import './products.dart';
+import '../scoped_model/main.dart';
 
 class AuthPage extends StatelessWidget {
   final bool _arrangedTerm = false;
   final GlobalKey<FormState> formkey = GlobalKey<FormState>();
+   String email;
+   String password;
+
   BoxDecoration _buildBackgroundImage() {
     return BoxDecoration(
         image: DecorationImage(
@@ -16,7 +21,9 @@ class AuthPage extends StatelessWidget {
 
   Widget _buildLoginTextField() {
     return TextFormField(
-      onSaved: (String value) {},
+      onSaved: (String value) {
+        email = value;
+      },
       validator: (String value){
         if(value.isEmpty || !RegExp(r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$').hasMatch(value))
              return 'email is required or enter a valid email';
@@ -30,7 +37,9 @@ class AuthPage extends StatelessWidget {
 
   Widget _buildPasswordTextField() {
     return TextFormField(
-      onSaved: (String value) {},
+      onSaved: (String value) {
+        password = value;
+      },
 
       validator: (String value){
         print('repo email');
@@ -47,19 +56,24 @@ class AuthPage extends StatelessWidget {
   }
 
   Widget _buildSubmitRaisedButton(BuildContext context) {
-    return RaisedButton(
-      color: Theme.of(context).accentColor,
-      child: Text(
-        'LOGIN',
-        style: TextStyle(color: Colors.white),
-      ),
-      onPressed: () {
-        if(!formkey.currentState.validate())
-          return;
-        else
-        Navigator.pushReplacementNamed(context, '/productspage');
-      },
-    );
+    return ScopedModelDescendant<MainModel>(builder: (BuildContext context,Widget child,MainModel model){
+      return RaisedButton(
+        color: Theme.of(context).accentColor,
+        child: Text(
+          'LOGIN',
+          style: TextStyle(color: Colors.white),
+        ),
+        onPressed: () {
+          if(!formkey.currentState.validate())
+            return;
+          else{
+            formkey.currentState.save();
+            model.login(email, password);
+            Navigator.pushReplacementNamed(context, '/productspage');
+          }
+        },
+      );
+    },);
   }
 
   @override

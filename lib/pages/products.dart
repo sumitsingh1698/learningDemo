@@ -4,9 +4,39 @@ import 'package:scoped_model/scoped_model.dart';
 import '../wigdet/products/products.dart';
 import '../scoped_model/main.dart';
 
-class ProductsPage extends StatelessWidget {
+class ProductsPage extends StatefulWidget {
+  final MainModel mainModel ;
+  ProductsPage(this.mainModel);
+  @override
+  State<StatefulWidget> createState() {
+
+  return ProductsPageState();
+
+    }
+  }
+
+  class ProductsPageState extends State<ProductsPage>{
+  @override
+  void initState() {
+    widget.mainModel.fetchData();
+    super.initState();
+  }
+  Widget buildProducts(){
+
+    return ScopedModelDescendant<MainModel>(builder: (BuildContext context,Widget child,MainModel model){
+      Widget display = Center(child: Text('No Product Found'));
+       if(model.products.length > 0 && !model.isLoading){
+        display = Products();
+      }
+      else if(model.isLoading){
+        display =  Center(child: CircularProgressIndicator());
+      }
+      return RefreshIndicator(child: display, onRefresh: model.fetchData);
+    });
+  }
   @override
   Widget build(BuildContext context) {
+
     return ScopedModelDescendant<MainModel>(builder: (BuildContext context,Widget child,MainModel model){
       return Scaffold(
         drawer: Drawer(
@@ -37,7 +67,7 @@ class ProductsPage extends StatelessWidget {
             )
           ],
         ),
-        body: Products(),
+        body: buildProducts(),
       );
     },);
   }

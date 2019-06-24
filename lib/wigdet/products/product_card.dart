@@ -31,6 +31,7 @@ class ProductCard extends StatelessWidget{
                   Price_Tag(product.price.toString()),
                 ],
               ),
+              Text(product.id ),
               AddressView('Sangam Vihar, New Delhi'),
               ButtonBar(
                 alignment: MainAxisAlignment.center,

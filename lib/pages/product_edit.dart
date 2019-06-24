@@ -6,8 +6,8 @@ import '../scoped_model/main.dart';
 
 class ProductEditPage extends StatefulWidget {
   final int index;
-  ProductEditPage(
-      {this.index});
+
+  ProductEditPage({this.index});
 
   @override
   State<StatefulWidget> createState() {
@@ -56,8 +56,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
 
   Widget _productPriceTextField(String price) {
     return TextFormField(
-      initialValue:
-          price == null ? '' : price,
+      initialValue: price == null ? '' : price,
       keyboardType: TextInputType.number,
       decoration: InputDecoration(labelText: 'Product Price'),
       validator: (String value) {
@@ -75,20 +74,20 @@ class _ProductEditPageState extends State<ProductEditPage> {
       return;
     }
     formKey.currentState.save();
-    Product  product = Product(
-        title: _formdata['title'],
-        description: _formdata['description'],
-        price: _formdata['price'],
-        image: _formdata['image']);
 
     if (widget.index != null) {
       print('update');
       model.selectProduct(widget.index);
-      model.updateProduct(product);
-    }
-    else
-     model.addProduct(product);
-    Navigator.pushReplacementNamed(context, '/productspage');
+      model.updateProduct(_formdata['title'], _formdata['description'],
+          _formdata['price'], _formdata['image']).then((_){
+        Navigator.pushReplacementNamed(context, '/productspage');
+      });
+    } else
+      model.addProduct(_formdata['title'], _formdata['description'],
+          _formdata['price'], _formdata['image']).then((_){
+        Navigator.pushReplacementNamed(context, '/productspage');
+      });
+
   }
 
   @override
@@ -97,44 +96,44 @@ class _ProductEditPageState extends State<ProductEditPage> {
     final double viewWidth =
         phoneWidth > 500 ? phoneWidth * 0.8 : phoneWidth * 0.95;
     final double listViewPadding = phoneWidth - viewWidth;
-    Widget pageEdit = GestureDetector(
-      onTap: () {
-        FocusScope.of(context).requestFocus(FocusNode());
-      },
-      child: ScopedModelDescendant<MainModel>(builder: (BuildContext context,Widget child,MainModel model){
-        List<Product> products = model.products;
-        String title = '';
-        String descip = '';
-        String price = '';
-        if(widget.index != null){
-          title = products[widget.index].title;
-          descip = products[widget.index].description;
-          price = products[widget.index].price.toString();
-        }
-        return Container(
-          child: Form(
-            key: formKey,
-            child: ListView(
-              padding: EdgeInsets.symmetric(horizontal: listViewPadding),
-              children: <Widget>[
-                _productTitleTextField(title),
-                _productDescriptionTextField(descip),
-                _productPriceTextField(price),
-                SizedBox(
-                  height: 50.0,
-                ),
-                RaisedButton(
-                  child: Text('Save'),
-                  textColor: Colors.white,
-                  onPressed: () =>_buttonPressed(model),
-                )
-              ],
-            ),
+    Widget pageEdit = GestureDetector(onTap: () {
+      FocusScope.of(context).requestFocus(FocusNode());
+    }, child: ScopedModelDescendant<MainModel>(
+        builder: (BuildContext context, Widget child, MainModel model) {
+      List<Product> products = model.products;
+      String title = '';
+      String descip = '';
+      String price = '';
+      if (widget.index != null) {
+        title = products[widget.index].title;
+        descip = products[widget.index].description;
+        price = products[widget.index].price.toString();
+      }
+      return Container(
+        child: Form(
+          key: formKey,
+          child: ListView(
+            padding: EdgeInsets.symmetric(horizontal: listViewPadding),
+            children: <Widget>[
+              _productTitleTextField(title),
+              _productDescriptionTextField(descip),
+              _productPriceTextField(price),
+              SizedBox(
+                height: 50.0,
+              ),
+              model.isLoading == true? Center(child:CircularProgressIndicator()):RaisedButton(
+                child: Text('Save'),
+                textColor: Colors.white,
+                onPressed: () => _buttonPressed(model),
+              )
+            ],
           ),
-        );
-      })
-    );
-    return  widget.index == null? pageEdit:Scaffold(
+        ),
+      );
+    }));
+    return widget.index == null
+        ? pageEdit
+        : Scaffold(
             appBar: AppBar(
               title: Text("Edit Product"),
             ),

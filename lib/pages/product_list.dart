@@ -5,19 +5,35 @@ import 'product_edit.dart';
 import '../scoped_model/main.dart';
 import '../models/product.dart';
 
-class ProductListPage extends StatelessWidget {
+class ProductListPage extends StatefulWidget {
 
+  final MainModel mainModel;
+  ProductListPage(this.mainModel);
+
+  @override
+  State<StatefulWidget> createState() {
+
+    return _ProductListPageState();
+  }
+}
+class _ProductListPageState extends State<ProductListPage>{
+
+  @override
+  void initState() {
+    widget.mainModel.fetchData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant < MainModel > (
         builder: (BuildContext context, Widget child, MainModel model){
       List<Product> products = model.products;
-      if (products.isEmpty)
+      if (products.length == null && !model.isLoading)
         return Center(
           child: Text('Empty product'),
         );
-      else {
+      else if(products.length > 0 && !model.isLoading){
         return ListView.builder(
             itemCount: products.length,
             itemBuilder: (BuildContext context, int index) {
@@ -68,6 +84,9 @@ class ProductListPage extends StatelessWidget {
                 ),
               );
             });
+      }
+      else {
+        return Center(child: CircularProgressIndicator(),);
       }
 
   },);
