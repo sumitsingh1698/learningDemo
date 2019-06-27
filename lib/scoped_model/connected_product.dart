@@ -11,8 +11,9 @@ class ConnectedModel extends Model {
   int selectedProductIndex;
   User authenticateUser;
   bool _isLoading;
+  String selectedProductId;
 
-  Future<Null> addProduct(
+  Future<bool> addProduct(
       String title, String description, double price, String image) {
     _isLoading = true;
     notifyListeners();
@@ -28,6 +29,11 @@ class ConnectedModel extends Model {
         .post('https://flutterapp-7dbb9.firebaseio.com/products.json',
             body: json.encode(postProduct))
         .then((http.Response response) {
+          if(response.statusCode != 200 && response.statusCode != 201){
+            _isLoading = false;
+            notifyListeners();
+            return false;
+          }
       Map<String, dynamic> responseData = json.decode(response.body);
 
       Product product = Product(
@@ -42,6 +48,12 @@ class ConnectedModel extends Model {
       print('${authenticateUser.email}email id');
       _isLoading = false;
       notifyListeners();
+      return true;
+    }).catchError((error){
+      _isLoading = false;
+      notifyListeners();
+      print(error);
+      return false;
     });
 
   }
@@ -53,12 +65,37 @@ class ConnectedModel extends Model {
   }
 
   List<Product> get displayProducts {
-    if (_showFavorite)
-      return List.from(products.where((Product product) => product.isFavorite));
+    if (_showFavorite){
+      List<Product> pro =  List.from(products.where((Product product) {
+        print(' is fav ${product.isFavorite}');
+        return product.isFavorite == true;
+      }));
+      for(int i =0; i<pro.length;i++){
+        print(pro[i].title);
+      }
+      return pro;
+    }
+
     return List.from(products);
   }
 
   int get getSelectedIndex {
+    int i = 0;
+    if (selectedProductId == null){
+      print('null selected Productid');
+      return null;
+    }
+
+    else{
+      print('else is call');
+
+       products.firstWhere((Product product) {
+         i++;
+         return product.id == selectedProductId;
+       });
+           }
+    selectedProductIndex = i-1;
+    print('sda;lkfjasd dfasdfas dfasd ');
     return selectedProductIndex;
   }
 
@@ -67,19 +104,25 @@ class ConnectedModel extends Model {
   }
 
   Product get getSelectedProduct {
-    if (selectedProductIndex == null)
+    if (selectedProductId == null)
       return null;
     else
-      return products[selectedProductIndex];
+      return products.firstWhere((Product product){
+        return product.id == selectedProductId;
+      });
   }
 
-  void deleteProduct() {
-    http.delete('https://flutterapp-7dbb9.firebaseio.com/products/${getSelectedProduct.id}.json');
-    products.removeAt(selectedProductIndex);
-    selectedProductIndex = null;
+  Future<bool> deleteProduct() {
+    return http.delete('https://flutterapp-7dbb9.firebaseio.com/products/${getSelectedProduct.id}.json').then((http.Response response){
+      products.removeAt(getSelectedIndex);
+      selectedProductId = null;
+      return true;
+    }).catchError((error){
+      return false;
+    });
   }
 
-  Future<Null> updateProduct(
+  Future<bool> updateProduct(
       String title, String description, double price, String image) {
     _isLoading = true;
     notifyListeners();
@@ -93,25 +136,20 @@ class ConnectedModel extends Model {
        'userEmail': authenticateUser.email
      };
     return http.put('https://flutterapp-7dbb9.firebaseio.com/products/${getSelectedProduct.id}.json',body: json.encode(putData)).then((http.Response response){
-      products[selectedProductIndex] = Product(
-          id: getSelectedProduct.id,
-          title: title,
-          description: description,
-          price: price,
-          image: image,
-          userId: authenticateUser.id,
-          userEmail: authenticateUser.email);
-
-      selectedProductIndex = null;
-      _isLoading = false;
+      fetchData();
       notifyListeners();
+      return true;
+    }).catchError((error){
+      _isLoading = false;
+       notifyListeners();
+       return false;
     });
 
   }
    void toggleIsLoading(){
     _isLoading = !_isLoading;
    }
-  Future<Null> fetchData(){
+  Future<bool> fetchData(){
     _isLoading = true;
     notifyListeners();
      return http.get('https://flutterapp-7dbb9.firebaseio.com/products.json').then((http.Response response){
@@ -120,7 +158,7 @@ class ConnectedModel extends Model {
        if(fetchData == null){
          _isLoading = false;
          notifyListeners();
-         return;
+         return true;
        }
        fetchData.forEach((String id,dynamic value){
          Product fetchProduct = Product(
@@ -137,27 +175,34 @@ class ConnectedModel extends Model {
          notifyListeners();
        });
        products = fetchProducts;
+     }).catchError((error){
+       _isLoading = false;
+       return false;
      });
   }
-  
-  void selectProduct(int index) {
-    selectedProductIndex = index;
+  void selectProduct(String id){
+    selectedProductId = id;
   }
-
   void toggleProductFavorite() {
-    final isCurrentStatus = getSelectedProduct.isFavorite;
+    Product selectedProduct = getSelectedProduct;
+    final isCurrentStatus = selectedProduct.isFavorite;
     final newStatus = !isCurrentStatus;
+    print('i am here');
     final Product product = Product(
-      title: getSelectedProduct.title,
-      description: getSelectedProduct.description,
-      price: getSelectedProduct.price,
-      image: getSelectedProduct.image,
+      id: selectedProduct.id,
+      title: selectedProduct.title,
+      description: selectedProduct.description,
+      price: selectedProduct.price,
+      image: selectedProduct.image,
       userId: authenticateUser.id,
       userEmail: authenticateUser.email,
       isFavorite: newStatus,
     );
-    products[selectedProductIndex] = product;
+    print('$getSelectedProduct get selected product');
+    products[getSelectedIndex] = product;
+    selectedProductId == null;
     notifyListeners();
+
   }
 
   void toggleShowFavorite() {

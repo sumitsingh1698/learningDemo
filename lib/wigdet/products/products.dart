@@ -13,7 +13,7 @@ class Products extends StatelessWidget {
       print('sdafja');
       productCards = ListView.builder(
         itemBuilder: (BuildContext context,int index) {
-          model.selectProduct(index);
+          model.selectProduct(products[index].id);
           return ProductCard();
         },
         itemCount: products.length,

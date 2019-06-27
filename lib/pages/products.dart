@@ -18,7 +18,9 @@ class ProductsPage extends StatefulWidget {
   class ProductsPageState extends State<ProductsPage>{
   @override
   void initState() {
-    widget.mainModel.fetchData();
+    widget.mainModel.fetchData().then((bool success){
+
+    });
     super.initState();
   }
   Widget buildProducts(){
@@ -31,7 +33,9 @@ class ProductsPage extends StatefulWidget {
       else if(model.isLoading){
         display =  Center(child: CircularProgressIndicator());
       }
-      return RefreshIndicator(child: display, onRefresh: model.fetchData);
+      return RefreshIndicator(child: display, onRefresh: () => model.fetchData().then((bool success){
+
+      }));
     });
   }
   @override

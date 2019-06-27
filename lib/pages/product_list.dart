@@ -52,7 +52,9 @@ class _ProductListPageState extends State<ProductListPage>{
                 onDismissed: (DismissDirection direc) {
                   if (direc == DismissDirection.startToEnd){
                     model.selectedProductIndex = index;
-                    model.deleteProduct();
+                    model.deleteProduct().then((bool isWork){
+
+                    });
                   }
                   if (direc == DismissDirection.endToStart) {
                     print('end to start');

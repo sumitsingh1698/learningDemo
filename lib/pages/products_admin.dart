@@ -24,7 +24,10 @@ ProductsAdminPage(this.mainModel);
                 leading: Icon(Icons.shop),
                 title: Text('All Products'),
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, '/');
+                  if(mainModel.authenticateUser != null)
+                  Navigator.pushReplacementNamed(context, '/productspage');
+                  else
+                    Navigator.pushReplacementNamed(context, '/');
                 },
               )
             ],

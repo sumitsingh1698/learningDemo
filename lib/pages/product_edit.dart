@@ -77,17 +77,37 @@ class _ProductEditPageState extends State<ProductEditPage> {
 
     if (widget.index != null) {
       print('update');
-      model.selectProduct(widget.index);
-      model.updateProduct(_formdata['title'], _formdata['description'],
-          _formdata['price'], _formdata['image']).then((_){
+      model.selectProduct(model.products[widget.index].id);
+      model
+          .updateProduct(_formdata['title'], _formdata['description'],
+              _formdata['price'], _formdata['image'])
+          .then((bool success) {
         Navigator.pushReplacementNamed(context, '/productspage');
       });
     } else
-      model.addProduct(_formdata['title'], _formdata['description'],
-          _formdata['price'], _formdata['image']).then((_){
-        Navigator.pushReplacementNamed(context, '/productspage');
+      model
+          .addProduct(_formdata['title'], _formdata['description'],
+              _formdata['price'], _formdata['image'])
+          .then((bool success) {
+        if (success)
+          Navigator.pushReplacementNamed(context, '/productspage');
+        else {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Went something worng!'),
+                  content: Text('please try again.'),
+                  actions: <Widget>[
+                    FlatButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text('Okay'),
+                    )
+                  ],
+                );
+              });
+        }
       });
-
   }
 
   @override
@@ -121,11 +141,13 @@ class _ProductEditPageState extends State<ProductEditPage> {
               SizedBox(
                 height: 50.0,
               ),
-              model.isLoading == true? Center(child:CircularProgressIndicator()):RaisedButton(
-                child: Text('Save'),
-                textColor: Colors.white,
-                onPressed: () => _buttonPressed(model),
-              )
+              model.isLoading == true
+                  ? Center(child: CircularProgressIndicator())
+                  : RaisedButton(
+                      child: Text('Save'),
+                      textColor: Colors.white,
+                      onPressed: () => _buttonPressed(model),
+                    )
             ],
           ),
         ),

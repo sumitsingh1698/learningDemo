@@ -6,6 +6,7 @@ import 'title_text.dart';
 import 'address_view.dart';
 import '../../scoped_model/main.dart';
 import '../../models/product.dart';
+import '../../pages/product.dart';
 
 class ProductCard extends StatelessWidget{
 
@@ -37,12 +38,11 @@ class ProductCard extends StatelessWidget{
                 alignment: MainAxisAlignment.center,
                 children: <Widget>[
                   IconButton(icon: Icon(Icons.info),  onPressed: () {
-                       model.selectProduct(productIndex);
-                    Navigator.pushNamed<bool>(
-                        context, '/product/' + productIndex.toString());
+                       model.selectProduct(product.id);
+                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>ProductPage()));
                   },),
-                  IconButton(icon: Icon(model.products[productIndex].isFavorite == true ? Icons.favorite :Icons.favorite_border,color: Colors.red,),onPressed: (){
-                    model.selectProduct(productIndex);
+                  IconButton(icon: Icon(product.isFavorite == true ? Icons.favorite :Icons.favorite_border,color: Colors.red,),onPressed: (){
+                    model.selectProduct(product.id);
                     model.toggleProductFavorite();
                     print('234222344');
                   }),

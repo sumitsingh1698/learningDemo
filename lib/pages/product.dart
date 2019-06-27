@@ -36,26 +36,20 @@ class ProductPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () {
-        print('Back button pressed!');
-        Navigator.pop(context, false);
-        return Future.value(false);
-      },
-      child: ScopedModelDescendant<MainModel>(builder: (BuildContext context,Widget child,MainModel model){
-        List<Product> products = model.products;
-        int index = model.getSelectedIndex;
+    return  ScopedModelDescendant<MainModel>(builder: (BuildContext context,Widget child,MainModel model){
+        Product product = model.getSelectedProduct;
         return Scaffold(
           appBar: AppBar(
-            title: Text(products[index].title),
+            title: Text(product.title),
+            automaticallyImplyLeading: true,
           ),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Image.asset(products[index].image),
+              Image.asset(product.image),
               Container(
                 padding: EdgeInsets.all(10.0),
-                child: TitleText(products[index].title),
+                child: TitleText(product.title),
               ),
               Container(
                 padding: EdgeInsets.all(10.0),
@@ -68,7 +62,7 @@ class ProductPage extends StatelessWidget {
             ],
           ),
         );
-      },),
-    );
+      },);
+
   }
 }
