@@ -5,7 +5,7 @@ import '../wigdet/products/products.dart';
 import '../scoped_model/main.dart';
 
 class ProductsPage extends StatefulWidget {
-  final MainModel mainModel ;
+  final MainModel mainModel;
   ProductsPage(this.mainModel);
   @override
   State<StatefulWidget> createState() {
