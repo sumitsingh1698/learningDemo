@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import '../scoped_model/main.dart';
-
-enum AuthMode { Login, SignUp }
+import '../models/auth.dart';
 
 class AuthPage extends StatefulWidget {
   @override
@@ -91,21 +90,19 @@ class _AuthPageState extends State<AuthPage> {
   Widget _buildSubmitRaisedButton(BuildContext context) {
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
-        Map<String, dynamic> returnData;
-        return RaisedButton(
+        return model.isLoading == true? Center(child: CircularProgressIndicator(),):RaisedButton(
           color: Theme.of(context).accentColor,
-          child: Text(
-            'LOGIN',
+          child: Text(_authMode == AuthMode.Login ? 'LOGIN': 'SIGNUP',
             style: TextStyle(color: Colors.white),
           ),
           onPressed: () async {
+           Map<String,dynamic> returnData;
             if (!formKey.currentState.validate()) return;
             formKey.currentState.save();
-            if (_authMode == AuthMode.SignUp) {
-              final returnData = await model.signUp(email, password);
-              if (returnData['success']) {
+            returnData = await model.authentication(email, password,_authMode);
+            if (returnData['success']) {
                 Navigator.pushReplacementNamed(context, '/productspage');
-              } else {
+            } else {
                 showDialog(
                     context: context,
                     builder: (BuildContext context) {
@@ -121,9 +118,7 @@ class _AuthPageState extends State<AuthPage> {
                       );
                     });
               }
-            } else {
-              model.login(email, password);
-            }
+
           },
         );
       },

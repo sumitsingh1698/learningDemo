@@ -24,9 +24,21 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  MainModel mainModel = MainModel();
+  bool _isAuthenticated = false;
+  @override
+  void initState() {
+    mainModel.getUser();
+    mainModel.userSubject.listen((bool isAuthnticated){
+      setState((){
+        _isAuthenticated = isAuthnticated;
+      });
+    });
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
-    MainModel mainModel = MainModel();
+
     return ScopedModel<MainModel>(
       model: mainModel,
       child: MaterialApp(
@@ -40,12 +52,14 @@ class _MyAppState extends State<MyApp> {
           primaryColorDark: Colors.orange,
           iconTheme: IconThemeData(color: Colors.deepPurple),
         ),
-        home: AuthPage(),
+//        home: ScopedModelDescendant(builder: (BuildContext context,Widget child,MainModel model){
+//          return model.authenticateUser == null? AuthPage(): ProductsPage(mainModel);
+//        }),
         routes: {
-//        '/': (BuildContext context) => ProductsPage(_products),
-          '/productspage': (BuildContext context) => ProductsPage(mainModel),
-          '/admin': (BuildContext context) => ProductsAdminPage(mainModel),
-          '/product': (BuildContext context) => ProductPage(),
+        '/': (BuildContext context) => !_isAuthenticated ? AuthPage() : ProductsPage(mainModel),
+          '/productspage': (BuildContext context) => !_isAuthenticated ? AuthPage() :ProductsPage(mainModel),
+          '/admin': (BuildContext context) => !_isAuthenticated ? AuthPage() :ProductsAdminPage(mainModel),
+          '/product': (BuildContext context) => !_isAuthenticated ? AuthPage() :ProductPage(),
         },
         onGenerateRoute: (RouteSettings settings) {
           final List<String> pathElements = settings.name.split('/');

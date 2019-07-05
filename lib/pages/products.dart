@@ -3,6 +3,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 import '../wigdet/products/products.dart';
 import '../scoped_model/main.dart';
+import '../wigdet/products/listTile.dart';
 
 class ProductsPage extends StatefulWidget {
   final MainModel mainModel;
@@ -56,7 +57,9 @@ class ProductsPage extends StatefulWidget {
                 onTap: () {
                   Navigator.pushReplacementNamed(context, '/admin');
                 },
-              )
+              ),
+              Divider(),
+              ListTileLogout(),
             ],
           ),
         ),

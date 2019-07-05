@@ -37,7 +37,7 @@ class _ProductListPageState extends State<ProductListPage>{
         return ListView.builder(
             itemCount: products.length,
             itemBuilder: (BuildContext context, int index) {
-              return Dismissible(
+              return products[index].userId != model.authenticateUser.id ? Container(): Dismissible(
                 key: Key(products[index].title),
                 background: Container(
                     color: Colors.red,
@@ -51,7 +51,7 @@ class _ProductListPageState extends State<ProductListPage>{
                 resizeDuration: Duration(seconds: 5),
                 onDismissed: (DismissDirection direc) {
                   if (direc == DismissDirection.startToEnd){
-                    model.selectedProductIndex = index;
+                    model.selectProduct(products[index].id);
                     model.deleteProduct().then((bool isWork){
 
                     });
